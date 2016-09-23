@@ -27,19 +27,33 @@ class Xdebug implements Driver
     private $cacheNumLines = [];
 
     /**
+     * @var int
+     */
+    private $flags = 0;
+
+    /**
      * Constructor.
      */
-    public function __construct()
+    public function __construct($pathCoverage = true)
     {
         if (!extension_loaded('xdebug')) {
             throw new RuntimeException('This driver requires Xdebug');
         }
 
-        if (version_compare(phpversion('xdebug'), '2.2.1', '>=') &&
-            !ini_get('xdebug.coverage_enable')) {
+        if (version_compare(phpversion('xdebug'), '2.3.2', '>=')) {
+            throw new RuntimeException(
+                'This driver requires Xdebug 2.3.2 (or newer)'
+            );
+        }
+
+        if (!ini_get('xdebug.coverage_enable')) {
             throw new RuntimeException(
                 'xdebug.coverage_enable=On has to be set in php.ini'
             );
+        }
+
+        if ($pathCoverage) {
+            $this->flags |= XDEBUG_CC_BRANCH_CHECK;
         }
     }
 
@@ -51,10 +65,10 @@ class Xdebug implements Driver
     public function start($determineUnusedAndDead = true)
     {
         if ($determineUnusedAndDead) {
-            xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
-        } else {
-            xdebug_start_code_coverage();
+            $this->flags = XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE;
         }
+
+        xdebug_start_code_coverage($this->flags);
     }
 
     /**
@@ -78,14 +92,18 @@ class Xdebug implements Driver
     private function cleanup(array $data)
     {
         foreach (array_keys($data) as $file) {
-            unset($data[$file][0]);
+            if (!isset($data[$file]['lines'])) {
+                $data[$file] = array('lines' => $data[$file]);
+            }
+
+            unset($data[$file]['lines'][0]);
 
             if (strpos($file, 'xdebug://debug-eval') !== 0 && file_exists($file)) {
                 $numLines = $this->getNumberOfLinesInFile($file);
 
-                foreach (array_keys($data[$file]) as $line) {
+                foreach (array_keys($data[$file]['lines']) as $line) {
                     if ($line > $numLines) {
-                        unset($data[$file][$line]);
+                        unset($data[$file]['lines'][$line]);
                     }
                 }
             }

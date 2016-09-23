@@ -84,8 +84,8 @@ class Clover
                     $methodCount = 0;
 
                     foreach (range($method['startLine'], $method['endLine']) as $line) {
-                        if (isset($coverage[$line]) && ($coverage[$line] !== null)) {
-                            $methodCount = max($methodCount, count($coverage[$line]));
+                        if (isset($coverage['lines'][$line]) && ($coverage['lines'][$line] !== null)) {
+                            $methodCount = max($methodCount, count($coverage['lines'][$line]));
                         }
                     }
 
@@ -150,7 +150,7 @@ class Clover
                 $xmlClass->appendChild($xmlMetrics);
             }
 
-            foreach ($coverage as $line => $data) {
+            foreach ($coverage['lines'] as $line => $data) {
                 if ($data === null || isset($lines[$line])) {
                     continue;
                 }

@@ -11,7 +11,7 @@ PHP 5.6 is required but using the latest version of PHP is highly recommended.
 
 ### PHP 5
 
-[Xdebug](http://xdebug.org/) is the only source of raw code coverage data supported for PHP 5. Version 2.2.1 of Xdebug is required but using the latest version is highly recommended.
+[Xdebug](http://xdebug.org/) is the only source of raw code coverage data supported for PHP 5. Version 2.3.2 of Xdebug is required but using the latest version is highly recommended.
 
 ### PHP 7
 
@@ -48,3 +48,4 @@ $writer->process($coverage, '/tmp/clover.xml');
 $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
 $writer->process($coverage, '/tmp/code-coverage-report');
 ```
+

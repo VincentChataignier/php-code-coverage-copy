@@ -293,10 +293,10 @@ class File extends Renderer
             $popoverContent = '';
             $popoverTitle   = '';
 
-            if (array_key_exists($i, $coverageData)) {
-                $numTests = count($coverageData[$i]);
+            if (array_key_exists($i, $coverageData['lines'])) {
+                $numTests = count($coverageData['lines'][$i]);
 
-                if ($coverageData[$i] === null) {
+                if ($coverageData['lines'][$i] === null) {
                     $trClass = ' class="warning"';
                 } elseif ($numTests == 0) {
                     $trClass = ' class="danger"';
@@ -310,7 +310,7 @@ class File extends Renderer
                         $popoverTitle = '1 test covers line ' . $i;
                     }
 
-                    foreach ($coverageData[$i] as $test) {
+                    foreach ($coverageData['lines'][$i] as $test) {
                         if ($lineCss == 'covered-by-large-tests' && $testData[$test]['size'] == 'medium') {
                             $lineCss = 'covered-by-medium-tests';
                         } elseif ($testData[$test]['size'] == 'small') {

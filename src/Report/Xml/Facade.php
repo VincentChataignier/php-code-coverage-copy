@@ -126,7 +126,9 @@ class Facade
             $this->processFunction($function, $fileReport);
         }
 
-        foreach ($file->getCoverageData() as $line => $tests) {
+        $fileData = $file->getCoverageData();
+
+        foreach ($fileData['lines'] as $line => $tests) {
             if (!is_array($tests) || count($tests) == 0) {
                 continue;
             }
